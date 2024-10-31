@@ -97,11 +97,6 @@ func (u *Updater) CheckIfNewVersionIsAvailable() error {
 }
 
 func (u *Updater) Update() error {
-	err := u.CheckIfNewVersionIsAvailable()
-	if err != nil {
-		return err
-	}
-
 	version, err := u.fetchLatestVersion()
 	if err != nil {
 		return err
