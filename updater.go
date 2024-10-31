@@ -90,7 +90,7 @@ func (u *Updater) CheckIfNewVersionIsAvailable() error {
 	}
 
 	if latestVersion.GreaterThan(currentVersion) {
-		fmt.Printf("A new version of %s is available (%s). Run `%s update` to update.\n\n", u.AppName, u.AppVersion, u.AppName)
+		fmt.Printf("A new version of %s is available (%s). Run `%s update` to update.\n\n", u.AppName, latestVersion, u.AppName)
 	}
 
 	return nil
