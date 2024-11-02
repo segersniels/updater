@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"time"
 
 	"github.com/hashicorp/go-version"
@@ -96,6 +97,20 @@ func (u *Updater) CheckIfNewVersionIsAvailable() error {
 	return nil
 }
 
+// Determine the install path for the application
+func (u *Updater) determineInstallPath() string {
+	success, err := exec.Command("which", u.AppName).Output()
+	if err == nil {
+		return filepath.Dir(string(success))
+	}
+
+	if os.Getenv("GOBIN") != "" {
+		return os.Getenv("GOBIN")
+	}
+
+	return "/usr/local/bin"
+}
+
 func (u *Updater) Update() error {
 	version, err := u.fetchLatestVersion()
 	if err != nil {
@@ -107,11 +122,9 @@ func (u *Updater) Update() error {
 	args := []string{"install", "-ldflags", ldflags, origin}
 	cmd := exec.Command("go", args...)
 
-	// If the GOBIN environment variable is not set, set it to `/usr/local/bin/`.
-	// Users can override it by setting GOBIN in their environment.
-	if os.Getenv("GOBIN") == "" {
-		cmd.Env = append(os.Environ(), "GOBIN=/usr/local/bin/")
-	}
+	// Use the GOBIN env var to tell go where to install the application
+	path := u.determineInstallPath()
+	cmd.Env = append(os.Environ(), "GOBIN="+path)
 
 	// Capture the output of the command
 	var stdout, stderr bytes.Buffer
