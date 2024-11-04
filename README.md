@@ -5,7 +5,7 @@ A simple library for updating your Go applications.
 ## Installation
 
 ```bash
-go get github.com/segersniels/updater
+go get -u github.com/segersniels/updater
 ```
 
 ## Usage
@@ -14,7 +14,7 @@ go get github.com/segersniels/updater
 package main
 
 import (
- "github.com/segersniels/updater"
+ updater "github.com/segersniels/updater"
 )
 
 var (
@@ -23,13 +23,13 @@ var (
 )
 
 func main() {
-  updater := update.NewUpdater(AppName, AppVersion, "segersniels")
-  err := updater.CheckIfNewVersionIsAvailable()
+  upd := updater.NewUpdater(AppName, AppVersion, "segersniels")
+  err := upd.CheckIfNewVersionIsAvailable()
   if err != nil {
     println("Failed to check for latest release")
   }
 
-  err := updater.Update()
+  err := upd.Update()
   if err != nil {
     println("Failed to update application")
   }
