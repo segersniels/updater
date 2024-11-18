@@ -75,27 +75,27 @@ func (u *Updater) fetchLatestVersion() (*version.Version, error) {
 	return latestVersion, nil
 }
 
-// Checks if a new version is available
-func (u *Updater) IsNewVersionAvailable() bool {
+// Returns the latest version if a new version is available
+func (u *Updater) IsNewVersionAvailable() *version.Version {
 	if u.AppVersion == "" {
-		return false
+		return nil
 	}
 
 	currentVersion, err := version.NewVersion(u.AppVersion)
 	if err != nil {
-		return false
+		return nil
 	}
 
 	latestVersion, err := u.fetchLatestVersion()
 	if err != nil {
-		return false
+		return nil
 	}
 
 	if latestVersion.GreaterThan(currentVersion) {
-		return true
+		return latestVersion
 	}
 
-	return false
+	return nil
 }
 
 // Check if a new version is available and print a message
