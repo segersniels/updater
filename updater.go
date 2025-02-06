@@ -1,7 +1,6 @@
 package updater
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -115,7 +114,7 @@ func (u *Updater) CheckIfNewVersionIsAvailable() error {
 	}
 
 	if latestVersion.GreaterThan(currentVersion) {
-		fmt.Printf("A new version of %s is available (%s). Run `%s update` to update.\n\n", u.AppName, latestVersion, u.AppName)
+		fmt.Printf("A new version of %s is available (%s).\n\n", u.AppName, latestVersion)
 	}
 
 	return nil
@@ -133,32 +132,4 @@ func (u *Updater) determineInstallPath() string {
 	}
 
 	return "/usr/local/bin"
-}
-
-func (u *Updater) Update() error {
-	version, err := u.fetchLatestVersion()
-	if err != nil {
-		return err
-	}
-
-	ldflags := fmt.Sprintf("-w -s -X main.AppVersion=%s -X main.AppName=%s", version, u.AppName)
-	origin := fmt.Sprintf("github.com/%s/%s@%s", u.Author, u.AppName, version)
-	args := []string{"install", "-ldflags", ldflags, origin}
-	cmd := exec.Command("go", args...)
-
-	// Use the GOBIN env var to tell go where to install the application
-	path := u.determineInstallPath()
-	cmd.Env = append(os.Environ(), "GOBIN="+path)
-
-	// Capture the output of the command
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	err = cmd.Run()
-	if err != nil {
-		return errors.New(stderr.String())
-	}
-
-	return nil
 }

@@ -28,10 +28,5 @@ func main() {
   if err != nil {
     println("Failed to check for latest release")
   }
-
-  err := upd.Update()
-  if err != nil {
-    println("Failed to update application")
-  }
 }
 ```
